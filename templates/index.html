@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% include 'header.html' %}
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
+            <a class="navbar-brand js-scroll-trigger" href="#page-top">
+                <span class="d-block d-lg-none">Sandra Strack</span>
+                <span class="d-none d-lg-block"><img class="img-fluid img-profile mx-auto mb-2" src="/static/images/freepik_6226306.jpg" alt="..." /></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">Demo project</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#stacked_bar_chart">Stacked bar chart</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#data_table">Data Table</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#grouped_bar_chart">Grouped bar chart</a></li>
+                </ul>
+            </div>
+        </nav>
+        <!-- Page Content-->
+        <div class="container-fluid p-0">
+            <!-- About-->
+            <section class="resume-section" id="about">
+                <div class="resume-section-content">
+                    <h2 class="mb-0">
+                        <span class="text-primary">Sandra Strack - Demo project</span>
+                    </h2>
+                    <hr>
+                    <div class="subheading mb-5">The Project is made in:</div>
+                            <ul class="fa-ul mb-0">
+                                <li>
+                                    <span class="fa-li"><i class="fas fa-check"></i></span>
+                                    Python 3, Flask, Pandas
+                                </li>
+                                <li>
+                                    <span class="fa-li"><i class="fas fa-check"></i></span>
+                                    Bootstrap 5, JQuery, Javascript, HTML, CSS
+                                </li>
+                                <li>
+                                    <span class="fa-li"><i class="fas fa-check"></i></span>
+                                    D3.v7.js, Datatables.js
+                                </li>
+                                <li>
+                                    <span class="fa-li"><i class="fas fa-check"></i></span>
+                                    Database: PostgreSQL
+                                </li>
+                            </ul><br>
+                    <div class="subheading mb-5">You can find the Code on <a href="https://github.com/this-sandra/demo-flask" target="_blank">my github page</a></div>
+                    <hr>
+                    <p class="lead mb-5"><b class="text-primary">The used Data is taken from: 
+                        <a href="https://www.statistikportal.de/de/veroeffentlichungen/open-data-schiffsverkehr" target="_blank">www.statistikportal.de</a> and is about freight transport by inland waterway in Germany.
+                    </p>   
+                    <p class="lead mb-5"><b class="text-primary">
+                        <a href="/static/pdf/IWW_OpenData_Datensatzbeschreibung.pdf" target="_blank">Description of the dataset</a>
+                    </p>   
+                </div>
+            </section>
+            <hr class="m-0" />
+            <!-- stacked bar chart -->
+            <section class="resume-section" id="stacked_bar_chart">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Shiptypes and loaded products for selected year: <span class="text-primary">{{ selected_year|safe }}</span></h2>
+                    <h4 class="mb-2">For readability reasons, only products with transport quantities greater than 500 are displayed.</h4>
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                                <div class="container">
+                                    <br>
+                                    <form action="/demo/" method="POST">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="year" value="2022"> 2022
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="year" value="2021"> 2021
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="year" value="2020"> 2020
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="year" value="2019"> 2019
+                                        </label>
+                                        <label class="radio-inline pe-4">
+                                            <input type="radio" name="year" value="2018"> 2018
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input class="btn btn-success" type="submit">
+                                        </label>
+                                    </form>
+                                    
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex p-3">
+                                        <div class="row">
+                                          <div class="col-sm" id="stacked_barchart_v7" data="{{ csv_data }}">
+                                          </div>
+                                          <div class="col-sm" id="chart_legend" data="{{ csv_data }}">
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br><br>
+                                <a href="/demo/api/stacked_bar_chart" class="btn btn-success" role="button" target="_blank">API with stacked barchart data, for year: {{ selected_year|safe }}</a>
+                        </div>
+
+                    </div>      
+                </div>
+            </section>
+            <hr class="m-0" />
+            <!-- Data Table -->
+            <section class="resume-section" id="data_table">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">{{ evas.replace("'", "")|safe }} in Germany for <span class="text-primary">{{ year|safe }} | {{ month|safe }}</span></h2>
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0"></h3>
+                                <form action="/demo/" method="POST">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="year_1" value="2022"> 2022
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="year_1" value="2021"> 2021
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="year_1" value="2020"> 2020
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="year_1" value="2019"> 2019
+                                    </label>
+                                    <label class="radio-inline pe-4">
+                                        <input type="radio" name="year_1" value="2018"> 2018
+                                    </label>
+                                    <label for="months"> Month:</label>
+                                    <select name="month" id="months">
+                                        {% for month in months | sort %}
+                                            <option value="{{ month }}">{{ month }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label class="radio-inline ps-4">
+                                        <input class="btn btn-success" type="submit">
+                                    </label>
+                                </form>
+                            <div class="subheading mb-3"></div>
+
+                            <div class="container">    
+                                <table id="data-table" class="table table-bordered table-striped nowrap" style="width:100%">
+                                    <thead> 
+                                        <tr> 
+                                            <th>loading region iso label</th> 
+                                            <th>loading harbour id label</th> 
+                                            <th>unloading region iso label</th>
+                                            <th>unloading region harbour label</th>
+                                            <th>traffic relation label</th>
+                                            <th>distance level label</th>
+                                            <th>ship type label</th>
+                                            <th>flag label</th>
+                                            <th>nst2007 label</th>
+                                        </tr> 
+                                    </thead> 
+                                    <tbody> 
+                                        {% for row in data %} 
+                                        <tr> 
+                                            <td>{{ row[7]}}</td> 
+                                            <td>{{ row[12]}}</td> 
+                                            <td>{{ row[14]}}</td> 
+                                            <td>{{ row[19]}}</td> 
+                                            <td>{{ row[21]}}</td> 
+                                            <td>{{ row[23]}}</td> 
+                                            <td>{{ row[25]}}</td> 
+                                            <td>{{ row[27]}}</td> 
+                                            <td>{{ row[29]}}</td> 
+                                        </tr> 
+                                        {% endfor %} 
+                                    </tbody>
+                                </table>
+                              </div>
+                            <div>
+                                <br><br>
+                                <a href="/demo/api/data_table" class="btn btn-success" role="button" target="_blank">API with table data, for: {{ year|safe }} | {{ month|safe }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                
+            </section>
+            <hr class="m-0" />
+            <!-- Grouped bar chart -->
+            <section class="resume-section" id="grouped_bar_chart">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Grouped bar chart <br> for products with values between: <span class="text-primary">{{ prod_value|safe }}</span></h2>
+                    <div class="subheading mb-3"></div>
+
+                    <div class="container">
+                        <br>
+                        <form action="/demo/" method="POST">
+                            <label class="radio-inline pe-4">
+                                <input type="radio" name="amount" value="group_max"> 1001 - 7000
+                            </label>
+                            <label class="radio-inline pe-4">
+                                <input type="radio" name="amount" value="group_mid"> 501 - 1000
+                            </label>
+                            <label class="radio-inline pe-4">
+                                <input type="radio" name="amount" value="group_min2"> 101 - 500
+                            </label>
+                            <label class="radio-inline pe-4">
+                                <input type="radio" name="amount" value="group_min1"> 0 - 100
+                            </label>
+                            <label class="radio-inline">
+                                <input class="btn btn-success" type="submit">
+                            </label>
+                        </form>
+                    </div>
+                    <br>
+
+                    <div class="card-body">
+                        <div class="d-flex p-3">
+                            <div class="row">
+                              <div class="col-sm" id="grouped_barchart_v7" data="{{ csv_data_grouped }}">
+                              </div>
+                              <div class="col-sm" id="chart_legend_grouped" data="{{ csv_data_grouped }}">
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <br><br>
+                        <a href="/demo/api/data_grouped" class="btn btn-success" role="button" target="_blank">API with group barchart data, for products with values between: {{ prod_value|safe }}</a>
+                    </div>
+                        
+                </div>
+            </section>
+            <hr class="m-0" />
+          
+            <section class="footer" id="footer">
+                <div class="container">
+                    <br>
+                    <p class="text-center text-black">Copyright &copy; Sandra Strack <span id="year"></span></p>
+                    <br>
+                </div>
+            </section>
+        </div>
+        {% include 'footer.html' %}
+
+        <script src="/static/js/d3_v7_stacked_barchart.js"></script> 
+        <script src="/static/js/d3_v7_grouped_barchart.js"></script> 
+        <script>
+            new DataTable('#data-table', {
+                responsive: true
+            });
+        </script>
+    </body>
+</html>
