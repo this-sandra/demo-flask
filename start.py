@@ -217,8 +217,8 @@ def api_grouped():
 
 
 # development
-# app.run()
+app.run()
 
 # production
-if __name__ == "__main__":
-  app.run(host='0.0.0.0', port=1024, debug=True)
+# if __name__ == "__main__":
+#  app.run(host='0.0.0.0', port=1024, debug=True)
