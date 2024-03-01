@@ -141,33 +141,37 @@
                                 </form>
                             <div class="subheading mb-3"></div>
 
-                            <div class="container">    
+                            <div class="container col-11">    
                                 <table id="data-table" class="table table-bordered table-striped nowrap" style="width:100%">
                                     <thead> 
                                         <tr> 
-                                            <th>loading region iso label</th> 
-                                            <th>loading harbour id label</th> 
-                                            <th>unloading region iso label</th>
-                                            <th>unloading region harbour label</th>
-                                            <th>traffic relation label</th>
-                                            <th>distance level label</th>
-                                            <th>ship type label</th>
-                                            <th>flag label</th>
-                                            <th>nst2007 label</th>
+                                            <th>flag label:</th>
+                                            <th>nst2007 label:</th>
+                                            <th>loading region iso label:</th> 
+                                            <th>unloading region harbour label:</th>
+
+                                            <th>traffic relation label:</th>
+                                            <th>distance level label:</th>
+                                            <th>ship type label:</th>
+
+                                            <th>loading harbour id label:</th> 
+                                            <th>unloading region iso label:</th> 
                                         </tr> 
                                     </thead> 
                                     <tbody> 
                                         {% for row in data %} 
                                         <tr> 
-                                            <td>{{ row[7]}}</td> 
-                                            <td>{{ row[12]}}</td> 
-                                            <td>{{ row[14]}}</td> 
-                                            <td>{{ row[19]}}</td> 
-                                            <td>{{ row[21]}}</td> 
-                                            <td>{{ row[23]}}</td> 
-                                            <td>{{ row[25]}}</td> 
-                                            <td>{{ row[27]}}</td> 
-                                            <td>{{ row[29]}}</td> 
+                                            <!-- flag label --><td>{{ row[27]}}</td> 
+                                            <!-- nst2007 label --><td>{{ row[29]}}</td> 
+                                            <!-- loading region iso label --><td>{{ row[7]}}</td> 
+                                            <!-- unloading region harbour label --><td>{{ row[19]}}</td> 
+                                           
+                                            <!-- traffic relation label --><td>{{ row[21]}}</td> 
+                                            <!-- distance level label --><td>{{ row[23]}}</td> 
+                                            <!-- ship type label --><td>{{ row[25]}}</td> 
+
+                                            <!-- loading harbour id label --><td>{{ row[12]}}</td> 
+                                            <!-- unloading region iso label --><td>{{ row[14]}}</td>    
                                         </tr> 
                                         {% endfor %} 
                                     </tbody>
@@ -235,7 +239,7 @@
             <section class="footer" id="footer">
                 <div class="container">
                     <br>
-                    <p class="text-center text-black">Copyright &copy; Sandra Strack <span id="year"></span></p>
+                    <p class="text-center text-black">Copyright <span id="year"></span> &copy; Sandra Strack</p>
                     <br>
                 </div>
             </section>
@@ -245,9 +249,13 @@
         <script src="/static/js/d3_v7_stacked_barchart.js"></script> 
         <script src="/static/js/d3_v7_grouped_barchart.js"></script> 
         <script>
+            // create the data table
             new DataTable('#data-table', {
                 responsive: true
-            });
+            });    
+
+            // date for the copyright
+            document.getElementById("year").innerHTML = new Date().getFullYear();
         </script>
     </body>
 </html>
