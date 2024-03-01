@@ -217,7 +217,11 @@ def api_grouped():
 
 
 # development
-app.run()
+if __name__ == '__main__':
+    app.run()
+
+# see application under http://127.0.0.1:5000/demo/
+
 
 # production
 # if __name__ == "__main__":
