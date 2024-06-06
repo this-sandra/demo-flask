@@ -7,6 +7,7 @@ import os
 app = Flask(__name__)
 app.json.ensure_ascii = False 
 
+# secret_key and session_cookie are neseccary for the flash messages
 secret = os.urandom(24)
 app.secret_key = secret
 
@@ -17,6 +18,20 @@ app.config.update(
 )
 
 get_db_connection()
+
+# adding error pages
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return render_template('405.html'), 405
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
 
 @app.route('/demo/')
 @app.route('/demo/', methods=('POST', 'GET'))
