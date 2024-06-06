@@ -43,32 +43,40 @@ def index():
     # create a cursor 
     cur = conn.cursor() 
 
+    year = 2022
+    month = 1
+    selected_year = 2022
+    amount = "group_max" 
+
     if request.method == 'POST':
         # datatable form
         if request.form.get("year_1"):
-            year = int(request.form.get("year_1"))
-        else:  
-            year = 2022
+            try:
+                year = int(request.form.get("year_1"))
+            except:
+                flash('Something went wrong. Wrong input type!', 'error')
+
         if request.form.get("month"):
-            month = int(request.form.get("month"))
-        else:  
-            month = 1  
+            try:
+                month = int(request.form.get("month"))
+            except:
+                flash('Something went wrong. Wrong input type!', 'error')
+        
         # stacked bar chart form    
         if request.form.get("year"):
-            selected_year = int(request.form.get("year"))
-        else:  
-            selected_year = 2022
+            try:
+                selected_year = int(request.form.get("year"))
+            except:
+                flash('Something went wrong. Wrong input type!', 'error')
+
         # grouped bar chart form        
         if request.form.get("amount"):
-            amount = str(request.form.get("amount"))
-        else:  
-            amount = "group_max"       
-    else:
-        year = 2022
-        month = 1
-        selected_year = 2022
-        amount = "group_max"   
-  
+            try:
+                amount = str(request.form.get("amount"))
+            except:
+                flash('Something went wrong. Wrong input type!', 'error')
+     
+      
     # data for the data table
     cur.execute("""
                     SELECT DISTINCT
@@ -155,7 +163,7 @@ def index():
 
     df_grouped['product'] = df_grouped['product'].str.replace(',','-')
     
-   
+
     match amount:
         case "group_max":
             prod_value = '1001 - 7000'

@@ -11,15 +11,15 @@ background-color: #204941; /* Green */
 }  
 
 .bg-yellow {
-    background-color: #f5cb42 /* Green */
+    background-color: #f5cb42 /* Yellow */
 }
 
 .bg-mid-yellow {
-    background-color: #efba0b; /* Green */
+    background-color: #efba0b; /* Yellow */
 }
 
 .bg-dark-yellow {
-    background-color: #b78e05; /* Green */
+    background-color: #b78e05; /* Yellow */
 }
 
 .text-green {
@@ -35,15 +35,15 @@ background-color: #204941; /* Green */
 }
 
 .text-yellow {
-    color: #f5cb42 /* Green */
+    color: #f5cb42 /* Yellow */
 }
 
 .text-mid-yellow {
-    color: #efba0b; /* Green */
+    color: #efba0b; /* Yellow */
 }
 
 .text-dark-yellow {
-    color: #b78e05; /* Green */
+    color: #b78e05; /* Yellow */
 }
 
 .text-bg-transparent {

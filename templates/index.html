@@ -8,6 +8,7 @@
         <div class="container-fluid p-1">
         <!-- Basic Cookie Info -->
         {% include 'cookieconsent.html' %}
+        {% include 'messages.html' %}
             <!-- About-->
             <section class="resume-section" id="about">
                 <div class="resume-section-content">
@@ -185,7 +186,6 @@
                     <div class="subheading mb-3"></div>
 
                     <div class="container">
-                        {% include 'messages.html' %}
                         <br>
                         <form action="/demo/" method="POST">
                             <label class="radio-inline pe-4">
@@ -236,8 +236,8 @@
         </div>
         {% include 'footer.html' %}
 
-        <script src="/static/js/d3_v7_stacked_barchart.js"></script> 
-        <script src="/static/js/d3_v7_grouped_barchart.js"></script> 
+        <script src="/static/js/d3_v7_stacked_barchart.js" defer></script> 
+        <script src="/static/js/d3_v7_grouped_barchart.js" defer></script> 
         <script>
             // create the data table
             new DataTable('#data-table', {

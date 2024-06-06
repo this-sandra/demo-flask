@@ -3,7 +3,7 @@
     <ul class=flashes>
     {% for category, message in messages %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong class="{{ category }}">{{ message }}</strong>
+        <strong class="{{ category }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ message }}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %}
