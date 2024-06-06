@@ -1,10 +1,20 @@
 from json import loads
-from flask import Flask, json, render_template, request
+from flask import Flask, flash, json, render_template, request
 from db import get_db_connection
 import pandas as pd
+import os
 
 app = Flask(__name__)
 app.json.ensure_ascii = False 
+
+secret = os.urandom(24)
+app.secret_key = secret
+
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+)
 
 get_db_connection()
 
@@ -129,22 +139,26 @@ def index():
     df_grouped = pd.DataFrame(data_raw_sql_grouped, columns = ['year', 'product', 'amount'])
 
     df_grouped['product'] = df_grouped['product'].str.replace(',','-')
+    
+   
+    match amount:
+        case "group_max":
+            prod_value = '1001 - 7000'
+            df_grouped = df_grouped.loc[df_grouped['amount'] > 1000]
+        case "group_mid":
+            prod_value = '501 - 1000'
+            df_grouped = df_grouped.loc[(df_grouped['amount'] > 500) & (df_grouped['amount'] < 1001)]
+        case "group_min2":
+            prod_value = '101 - 500'
+            df_grouped = df_grouped.loc[(df_grouped['amount'] > 100) & (df_grouped['amount'] < 501)]
+        case "group_min1":
+            prod_value = '0 - 100'
+            df_grouped = df_grouped.loc[df_grouped['amount'] < 101]   
+        case _:
+            prod_value = '0 - 100'
+            flash('Something went wrong. This input was not expected!', 'error')
 
-    if (amount == "group_max"):
-        prod_value = '1001 - 7000'
-        df_grouped = df_grouped.loc[df_grouped['amount'] > 1000]
 
-    if (amount == "group_mid"):
-        prod_value = '501 - 1000'
-        df_grouped = df_grouped.loc[(df_grouped['amount'] > 500) & (df_grouped['amount'] < 1001)]
-
-    if (amount == "group_min2"):
-        prod_value = '101 - 500'
-        df_grouped = df_grouped.loc[(df_grouped['amount'] > 100) & (df_grouped['amount'] < 501)]
-
-    if (amount == "group_min1"):
-        prod_value = '0 - 100'
-        df_grouped = df_grouped.loc[df_grouped['amount'] < 101]      
         
     # create csv from pandas df
     csv_data_grouped = df_grouped.to_csv(sep=',', index=False, encoding='utf-8')
@@ -217,10 +231,9 @@ def api_grouped():
 
 
 # development
+# see application under http://127.0.0.1:5000/demo/
 if __name__ == '__main__':
     app.run()
-
-# see application under http://127.0.0.1:5000/demo/
 
 
 # production
