@@ -1,7 +1,9 @@
-# Custom files to be excluded
+# Custom files and folders to be excluded
 db.py
 .DS_Store
 .venv
+logs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

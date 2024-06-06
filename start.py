@@ -1,7 +1,10 @@
 from json import loads
 from flask import Flask, flash, json, render_template, request
 from db import get_db_connection
+from datetime import datetime
+from logging.handlers import RotatingFileHandler
 import pandas as pd
+import logging
 import os
 
 app = Flask(__name__)
@@ -17,19 +20,36 @@ app.config.update(
     SESSION_COOKIE_SAMESITE='Lax',
 )
 
+if not app.debug:
+
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/demo.log', maxBytes=10240,
+                                       backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+
+now = datetime.now()
+dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
+
 get_db_connection()
 
 # adding error pages
 @app.errorhandler(404)
 def page_not_found(e):
+    app.logger.error(dt_string + ' 404 - Page not found. ' + 'Request URL: ' + request.url)  
     return render_template('404.html'), 404
 
 @app.errorhandler(405)
 def method_not_allowed(e):
+    app.logger.error(dt_string + ' 405 - Method not allowed')  
     return render_template('405.html'), 405
 
 @app.errorhandler(500)
 def internal_server_error(e):
+    app.logger.error(dt_string + ' 500 - Internal server error')  
     return render_template('500.html'), 500
 
 
@@ -43,40 +63,54 @@ def index():
     # create a cursor 
     cur = conn.cursor() 
 
+    # check if years exist
+    cur.execute(" SELECT DISTINCT isd.referenzzeitraum_jahr FROM inland_shipping_data isd ")
+    result = cur.fetchall() 
+    years_in_data = [x[0] for x in result]
+    years_in_data.sort()
+
     year = 2022
     month = 1
     selected_year = 2022
     amount = "group_max" 
+
+    months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
     if request.method == 'POST':
         # datatable form
         if request.form.get("year_1"):
             try:
                 year = int(request.form.get("year_1"))
+                years_in_data.index(year)
             except:
-                flash('Something went wrong. Wrong input type!', 'error')
+                year = 2022
+                flash('Something went wrong. Wrong input type or year not matching!', 'error')
+                app.logger.warning(dt_string + ' Request data: ' + request.form.get("year_1") + ' Input manipulation. Someone tryed to sent data through an unexpected way!')  
 
         if request.form.get("month"):
             try:
                 month = int(request.form.get("month"))
+                months.index(month)
             except:
-                flash('Something went wrong. Wrong input type!', 'error')
+                month = 1
+                flash('Something went wrong. Wrong input type or wrong range!', 'error')
+                app.logger.warning(dt_string + ' Request data: ' + request.form.get("month") + ' Input manipulation. Someone tryed to sent data through an unexpected way!')  
         
         # stacked bar chart form    
         if request.form.get("year"):
             try:
                 selected_year = int(request.form.get("year"))
+                years_in_data.index(selected_year)
             except:
-                flash('Something went wrong. Wrong input type!', 'error')
+                selected_year = 2022
+                flash('Something went wrong. Wrong input type or year not matching!', 'error')
+                app.logger.warning(dt_string + ' Request data: ' + request.form.get("year") + ' Input manipulation. Someone tryed to sent data through an unexpected way!')   
 
         # grouped bar chart form        
         if request.form.get("amount"):
-            try:
-                amount = str(request.form.get("amount"))
-            except:
-                flash('Something went wrong. Wrong input type!', 'error')
-     
-      
+            amount = request.form.get("amount")
+
+            
     # data for the data table
     cur.execute("""
                     SELECT DISTINCT
@@ -99,7 +133,7 @@ def index():
                           '''.format(year, month)
     
     data_raw_sql_table = pd.read_sql_query(sql_query_datatable, conn)
-
+    
     global json_data_table
     data_to_json_table = data_raw_sql_table.to_json(orient="table")
     json_data_table = loads(data_to_json_table) 
@@ -163,7 +197,7 @@ def index():
 
     df_grouped['product'] = df_grouped['product'].str.replace(',','-')
     
-
+ 
     match amount:
         case "group_max":
             prod_value = '1001 - 7000'
@@ -180,6 +214,7 @@ def index():
         case _:
             prod_value = '0 - 100'
             flash('Something went wrong. This input was not expected!', 'error')
+            app.logger.warning(dt_string + ' Input manipulation. Someone tryed to sent data through an unexpected way!')  
 
 
         
@@ -197,8 +232,6 @@ def index():
     # close the cursor and connection 
     cur.close() 
     conn.close() 
-
-    months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
     return render_template('index.html', 
                            data=data, 
